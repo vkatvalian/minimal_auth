@@ -6,16 +6,15 @@ import (
     "net/http"
     "html/template"
 
+    "github.com/vkatvalian/auth/helpers"
     "github.com/vkatvalian/auth/database"
 )
 
-type User struct{
-    Username string
-    Email    string
-    Password string
+type Handlers struct {
+    helper helpers.Helper
 }
 
-func handler(w http.ResponseWriter, req *http.Request) {
+func (h *Handlers) handler(w http.ResponseWriter, req *http.Request) {
     temp, err := template.ParseFiles("tmpl/singup.tmpl")
     if err != nil {
         log.Fatal(err)
@@ -33,6 +32,8 @@ func handler(w http.ResponseWriter, req *http.Request) {
     log.Println(password)
 
     // insert into db
+    h.helper.Insert(req.Context(), username, email, password)
+    
     // check if exists on db
 }
 
@@ -40,7 +41,10 @@ func main(){
     ctx := context.Background()
     db := database.Connection(ctx)
     db.CreateUsersTable(ctx)
+    h := helpers.Helper{db}
+    handlers := &Handlers{h}
 
-    http.HandleFunc("/signup", handler)
+    http.HandleFunc("/signup", handlers.handler)
     log.Fatal(http.ListenAndServe(":8080", nil))
+
 }

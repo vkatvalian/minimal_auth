@@ -31,3 +31,20 @@ func (db *Repository) CreateUsersTable(ctx context.Context) error {
     log.Printf("Rows affected when creating table: %d", rows)
     return nil
 }
+
+func (db *Repository) InsertUsers(ctx context.Context, username, email, password string) error {
+    query := `INSERT INTO users(username, email, password) VALUES (?, ?, ?);`
+    ctx, cancelfunc := context.WithTimeout(ctx, 5*time.Second)
+    defer cancelfunc()
+
+    stmt, err := db.Conn.PrepareContext(ctx, query)
+    if err != nil {}
+
+    defer stmt.Close()
+    res, err := stmt.ExecContext(ctx, username, email, password)
+
+    rows, err := res.RowsAffected()
+    if err != nil {}
+    log.Printf("Rows affected when creating table: %d", rows)
+    return err
+}
