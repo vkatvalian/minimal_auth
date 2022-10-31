@@ -4,22 +4,29 @@ import (
     "os"
     "log"
     "context"
-    "github.com/jackc/pgx/v4"
-
-    "gitlab.com/kamee/picverse/config"
+    "github.com/joho/godotenv"
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
 )
 
 type Repository struct {
-Conn *pgx.Conn
+    Conn *sql.DB
 }
 
 func Connection(ctx context.Context) *Repository {
-    conn, err := pgx.Connect(ctx, config.DBConfig().DSN)
+    err := godotenv.Load()
+    if err != nil {
+      log.Fatal("Error loading .env file")
+    }
+  
+    DSN := os.Getenv("DSN")
+
+    db, err := sql.Open("mysql", DSN)
     if err != nil {
         log.Fatal(err)
         os.Exit(1)
     }
 
-    repo := &Repository{conn}
+    repo := &Repository{db}
     return repo
 }

@@ -2,8 +2,11 @@ package main
 
 import (
     "log"
+    "context"
     "net/http"
     "html/template"
+
+    "github.com/vkatvalian/auth/database"
 )
 
 type User struct{
@@ -29,12 +32,15 @@ func handler(w http.ResponseWriter, req *http.Request) {
     log.Println(email)
     log.Println(password)
 
-    // create db conenction
     // insert into db
     // check if exists on db
 }
 
 func main(){
+    ctx := context.Background()
+    db := database.Connection(ctx)
+    db.CreateUsersTable(ctx)
+
     http.HandleFunc("/signup", handler)
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
