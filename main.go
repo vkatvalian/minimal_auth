@@ -5,6 +5,7 @@ import (
     "context"
     "net/http"
     "html/template"
+    "golang.org/x/crypto/bcrypt"
 
     "github.com/vkatvalian/auth/helpers"
     "github.com/vkatvalian/auth/database"
@@ -26,13 +27,19 @@ func (h *Handlers) handler(w http.ResponseWriter, req *http.Request) {
     }
     username := req.FormValue("username")
     email := req.FormValue("email")
-    password := req.FormValue("password")
-    log.Println(username)
-    log.Println(email)
-    log.Println(password)
+    password := []byte(req.FormValue("password"))
 
-    // insert into db
-    h.helper.Insert(req.Context(), username, email, password)
+    hashed_password, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+    if err != nil {
+        panic(err)
+    }
+
+    err = bcrypt.CompareHashAndPassword(hashed_password, password)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    h.helper.Insert(req.Context(), username, email, string(hashed_password))
     
     // check if exists on db
 }
