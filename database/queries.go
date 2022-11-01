@@ -48,3 +48,16 @@ func (db *Repository) InsertUsers(ctx context.Context, username, email, password
     log.Printf("Rows affected when creating table: %d", rows)
     return err
 }
+
+func (db *Repository) FetchUsers(ctx context.Context, _name string) (string, string, string, error) {
+    var username, email, password string
+
+    query := `SELECT username, email, password from users where username = ?`
+    ctx, cancelfunc := context.WithTimeout(ctx, 5*time.Second)
+    defer cancelfunc()
+
+    err := db.Conn.QueryRow(query, _name).Scan(&username, &email, &password)
+    if err != nil {}
+
+    return username, email, password, nil
+}

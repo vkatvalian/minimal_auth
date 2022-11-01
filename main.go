@@ -44,6 +44,12 @@ func (h *Handlers) handler(w http.ResponseWriter, req *http.Request) {
     // check if exists on db
 }
 
+func (h *Handlers) signin(w http.ResponseWriter, req *http.Request) {
+    username, _, password, _ := h.helper.Fetch(req.Context(), "q", "a", "egNZayt2ehDB8m7")
+    log.Println(username)
+    log.Println(password)
+}
+
 func main(){
     ctx := context.Background()
     db := database.Connection(ctx)
@@ -52,6 +58,7 @@ func main(){
     handlers := &Handlers{h}
 
     http.HandleFunc("/signup", handlers.handler)
+    http.HandleFunc("/signin", handlers.signin)
     log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
