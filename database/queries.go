@@ -1,6 +1,7 @@
 package database
 
 import (
+    "fmt"
     "log"
     "time"
     "context"
@@ -58,6 +59,7 @@ func (db *Repository) FetchUsers(ctx context.Context, _name string) (string, str
 
     err := db.Conn.QueryRow(query, _name).Scan(&username, &email, &password)
     if err != nil {}
+    fmt.Println(email)
 
     return username, email, password, nil
 }

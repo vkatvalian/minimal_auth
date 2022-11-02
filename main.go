@@ -16,7 +16,7 @@ type Handlers struct {
 }
 
 func (h *Handlers) handler(w http.ResponseWriter, req *http.Request) {
-    temp, err := template.ParseFiles("tmpl/singup.tmpl")
+    temp, err := template.ParseFiles("tmpl/signup.tmpl")
     if err != nil {
         log.Fatal(err)
     }
@@ -45,8 +45,27 @@ func (h *Handlers) handler(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handlers) signin(w http.ResponseWriter, req *http.Request) {
-    username, _, password, _ := h.helper.Fetch(req.Context(), "q", "a", "egNZayt2ehDB8m7")
+    temp, err := template.ParseFiles("tmpl/signin.tmpl")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    err = temp.Execute(w, nil)
+    if err != nil{
+        log.Fatal(err)
+    }
+    username_form := req.FormValue("username")
+    password_form := req.FormValue("password")
+
+    username, email, password, _ := h.helper.Fetch(req.Context(), username_form)
+    
+    ok := bcrypt.CompareHashAndPassword([]byte(password), []byte(password_form))
+    if ok != nil {
+        log.Println(ok)
+    }
+
     log.Println(username)
+    log.Println(email)
     log.Println(password)
 }
 

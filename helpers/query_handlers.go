@@ -15,8 +15,8 @@ func (h *Helper) Insert(ctx context.Context, username, email, password string) e
     return nil
 }
 
-func (h *Helper) Fetch(ctx context.Context, _name, email, password string) (string, string, string, error) {
-    username, _, _, err := h.DB.FetchUsers(ctx, _name)
+func (h *Helper) Fetch(ctx context.Context, _name string) (string, string, string, error) {
+    username, email, password, err := h.DB.FetchUsers(ctx, _name)
     if err != nil {}
     return username, email, password, nil
 }
