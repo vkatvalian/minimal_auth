@@ -7,7 +7,7 @@ import (
     "context"
 )
 
-func (db *Repository) CreateUsersTable(ctx context.Context) error {
+func (db *Repository) CreateTables(ctx context.Context) error {
     query := `CREATE TABLE IF NOT EXISTS users(
 	    id int primary key auto_increment,
 	    username text not null,

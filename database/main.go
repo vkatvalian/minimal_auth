@@ -13,7 +13,7 @@ type Repository struct {
     Conn *sql.DB
 }
 
-func Connection(ctx context.Context) *Repository {
+func Connect(ctx context.Context) *Repository {
     err := godotenv.Load()
     if err != nil {
       log.Fatal("Error loading .env file")
@@ -28,5 +28,6 @@ func Connection(ctx context.Context) *Repository {
     }
 
     repo := &Repository{db}
+    repo.CreateTables(ctx)
     return repo
 }
