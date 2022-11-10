@@ -5,13 +5,14 @@ import (
     "log"
     "time"
     "context"
+    "errors"
 )
 
 func (db *Repository) CreateTables(ctx context.Context) error {
     query := `CREATE TABLE IF NOT EXISTS users(
 	    id int primary key auto_increment,
-	    username text not null,
-	    email text not null,
+	    username text not null unique,
+	    email text not null unique,
 	    password text not null
     )`
 
@@ -39,13 +40,21 @@ func (db *Repository) InsertUsers(ctx context.Context, username, email, password
     defer cancelfunc()
 
     stmt, err := db.Conn.PrepareContext(ctx, query)
-    if err != nil {}
+    if err != nil {
+	return err
+    }
 
     defer stmt.Close()
     res, err := stmt.ExecContext(ctx, username, email, password)
+    if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+	custom_err := errors.New("User exists")
+	return custom_err
+    }
 
     rows, err := res.RowsAffected()
-    if err != nil {}
+    if err != nil {
+	return err
+    }
     log.Printf("Rows affected when creating table: %d", rows)
     return err
 }
@@ -59,7 +68,6 @@ func (db *Repository) FetchUsers(ctx context.Context, _name string) (string, str
 
     err := db.Conn.QueryRow(query, _name).Scan(&username, &email, &password)
     if err != nil {}
-    fmt.Println(email)
 
     return username, email, password, nil
 }

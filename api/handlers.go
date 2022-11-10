@@ -60,7 +60,6 @@ func (api *API) SignupHandler(w http.ResponseWriter, req *http.Request) {
     email := req.FormValue("email")
     password := req.FormValue("password")
 
-    // check if exists on db
     if username != "" && email != "" && password != "" {
         hashed_password, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
         if err != nil {
@@ -72,7 +71,8 @@ func (api *API) SignupHandler(w http.ResponseWriter, req *http.Request) {
             log.Fatal(err)
         }
 
-        api.DB.InsertUsers(req.Context(), username, email, string(hashed_password))
+	err = api.DB.InsertUsers(req.Context(), username, email, string(hashed_password))
+	log.Println(err)
     } else {
         log.Println("all fields are required")
     }

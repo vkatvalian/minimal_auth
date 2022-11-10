@@ -6,9 +6,10 @@ import (
     "context"
     "github.com/joho/godotenv"
     "database/sql"
-    _ "github.com/go-sql-driver/mysql"
+    "github.com/go-sql-driver/mysql"
 )
 
+var mysqlErr *mysql.MySQLError
 type Repository struct {
     Conn *sql.DB
 }
